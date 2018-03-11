@@ -1,5 +1,5 @@
 # yzx-framework
-<h1>整合Struts + Spring + mybatis 框架</h1>
+<h3>整合Struts + Spring + mybatis 框架</h3>
 <p>1.開發環境</p>
   <p>作業系統：windows10 專業版</p>
   <p>IDE：Mars Release (4.5.0)</p>
