@@ -46,10 +46,11 @@ public class RequestBean {
 			if (paramObj[0] instanceof File) {
 				List<UploadFile> list = new ArrayList<UploadFile>();
 				for (int i = 0; i < paramObj.length; i++) {
+					Object[] fileName = (Object[]) requestMap.get(key + "FileName");
 					File file = (File) paramObj[i];
 					UploadFile uploadFile = new UploadFile();
 					uploadFile.setFile(file);
-					uploadFile.setFileName(file.getName());
+					uploadFile.setFileName(String.valueOf(fileName[i]));
 					uploadFile.setRowSize(file.length());
 					list.add(uploadFile);
 				}
