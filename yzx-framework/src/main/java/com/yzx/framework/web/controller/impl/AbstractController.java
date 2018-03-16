@@ -1,5 +1,12 @@
 package com.yzx.framework.web.controller.impl;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -10,6 +17,7 @@ import org.springframework.context.ApplicationContext;
 import com.google.gson.Gson;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
+import com.yzx.framework.core.common.BaseConstant;
 import com.yzx.framework.web.controller.BaseController;
 import com.yzx.framework.web.controller.WebExecuteProxy;
 
@@ -23,6 +31,8 @@ public abstract class AbstractController extends ActionSupport implements BaseCo
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	private static final int DOWNLOAD_BUFFER_SIZE = 8096;
 	@Autowired
 	private ApplicationContext applicationContext;
 	
@@ -68,14 +78,8 @@ public abstract class AbstractController extends ActionSupport implements BaseCo
 		
 	}
 	
-	public AbstractController getCurrent() {
+	private AbstractController getCurrent() {
 		return this;
-	}
-	
-	public String toJsonString(Object obj) {
-		Gson gson = new Gson();
-		String str = gson.toJson(obj);
-		return str;
 	}
 	
 	/**
@@ -90,5 +94,52 @@ public abstract class AbstractController extends ActionSupport implements BaseCo
 	 */
 	public void setReturnType(ReturnType returnType) {
 		this.returnType = returnType;
+	}
+	/**
+	 * 下載檔案(使用預設檔名)
+	 * @param response
+	 * @param f
+	 */
+	public void pushToClient(HttpServletResponse response, File f)  {
+		pushToClient(response, f, f.getName());
+	}
+	/**
+	 * 下載檔案(自定義檔名)
+	 * @param response
+	 * @param f
+	 * @param fileName
+	 */
+	public void pushToClient(HttpServletResponse response, File f, String fileName)  {
+		response.setContentType(BaseConstant.HTTP_CONTENT_TYPE_STREAM);
+		response.setContentLength((int)f.length());
+		response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
+		InputStream fis = null;
+		OutputStream out = null;
+		try {
+			fis = new FileInputStream(f);
+			out = response.getOutputStream();
+			int len = 0;
+			byte[] buffer = new byte[DOWNLOAD_BUFFER_SIZE];
+			
+			while((len = fis.read(buffer)) > 0) {
+				out.write(buffer, 0, len);
+			}
+			out.flush();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (fis != null) {
+					fis.close();
+				}
+				if (out != null) {
+					out.close();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }
