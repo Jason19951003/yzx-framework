@@ -15,6 +15,7 @@ public class DBResultSetList {
 	public static final DBResultSetList createDBResultSetList(List<?> dataList) {
 		return new DBResultSetList(dataList);
 	}
+	
 	public int getTotalCount() {
 		return datalist.size();
 	}

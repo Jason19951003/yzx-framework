@@ -1,34 +1,33 @@
 package com.yzx.framework.core.dao;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.yzx.framework.core.dao.impl.DBResultSetImpl;
+
 public abstract class DBResultSet {
-	private ResultSet rs 		   = null;
-	private PreparedStatement ps   = null;
-	private Connection con         = null;	
+	private ResultSet rs 		   = null;	
+	private Connection con         = null;
+	private DataAccess da          = null;
 	private int totalCount;
 	
-	public DBResultSet()  {
-		
-	}	
-
+	public DBResultSet(ResultSet rs, int totalCount, DataAccess da)  {
+		this.rs = rs;
+		this.totalCount = totalCount;
+		this.da = da;
+	}
+	
+	public static DBResultSet createDBResultSet(ResultSet rs, int totalCount, DataAccess da) {
+		return new DBResultSetImpl(rs, totalCount, da);
+	}
+	
 	public ResultSet getRs() {
 		return rs;
 	}
 
 	public void setRs(ResultSet rs) {
 		this.rs = rs;
-	}
-
-	public PreparedStatement getPs() {
-		return ps;
-	}
-
-	public void setPs(PreparedStatement ps) {
-		this.ps = ps;
 	}
 
 	public Connection getCon() {
@@ -40,12 +39,12 @@ public abstract class DBResultSet {
 	}
 	
 	public void close() throws SQLException {
-		if(con != null) 
-			con.close();
-		if(ps != null)
-			ps.close();
-		if(rs != null)
-			rs.close();
+		if(con != null) {
+			this.da.releaseConnection(con);			
+		}			
+		if(rs != null) {
+			rs.close();		
+		}
 	}
 	
 	public int getTotalCount() throws SQLException {		

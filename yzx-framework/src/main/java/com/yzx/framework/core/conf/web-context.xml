@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/mvc 
+	http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">	
+
+	<!-- 註解掃描 -->
+	<context:component-scan base-package="com.yzx.framework.core.dao"></context:component-scan>
+	<context:component-scan base-package="com.yzx.framework.core.dao.impl"></context:component-scan>
+	<context:component-scan base-package="com.yzx.framework.core.dao.support"></context:component-scan>
+	<context:component-scan base-package="com.yzx.framework.web.controller"></context:component-scan>
+	<context:component-scan base-package="com.yzx.framework.web.controller.impl"></context:component-scan>
+	<context:component-scan base-package="com.yzx.framework.web.manager"></context:component-scan>
+	<context:component-scan base-package="com.yzx.framework.web.manager.impl"></context:component-scan>
+	
+	<bean id="schSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">		
+		<!-- 需有1個以上的文件才能使用 -->
+		<property name="mapperLocations" value="classpath:yzx/**/**/dao/mapper/*.xml"/>
+	</bean>
+	
+	<bean id="myBatisSqlGenerate" class="sch.core.dao.support.MybatisSqlGenerate" destroy-method="close">
+   		<property name="sqlSessionFactory" ref="schSqlSessionFactory" />
+   	</bean>
+</beans>
